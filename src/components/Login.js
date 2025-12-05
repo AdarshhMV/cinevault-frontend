@@ -7,6 +7,9 @@ function Login({ onLoginSuccess }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState(''); 
+  
+  // ⬇️ NEW: Loading State
+  const [isLoading, setIsLoading] = useState(false);
 
   // 🚀 LIVE BACKEND URL
   const API_BASE_URL = "https://cinevault-api-mcpa.onrender.com";
@@ -15,6 +18,7 @@ function Login({ onLoginSuccess }) {
     e.preventDefault();
     setError('');
     setSuccessMsg('');
+    setIsLoading(true); // ⬅️ Start Loading
 
     const url = isSignup 
       ? `${API_BASE_URL}/api/register/` 
@@ -42,12 +46,14 @@ function Login({ onLoginSuccess }) {
             onLoginSuccess();
         }
       } else {
+        setIsLoading(false); // ⬅️ Stop Loading on API Error
         if (data.username) setError(data.username[0]);
         else if (data.detail) setError(data.detail);
         else setError("Invalid credentials");
       }
     } catch (err) {
-      setError('Server not responding. Is the Backend running?');
+      setIsLoading(false); // ⬅️ Stop Loading on Network Error
+      setError('Server is waking up... please try again in 10 seconds.');
     }
   };
 
@@ -65,6 +71,7 @@ function Login({ onLoginSuccess }) {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            disabled={isLoading} // ⬅️ Disable input while loading
             required
           />
           <input
@@ -73,11 +80,24 @@ function Login({ onLoginSuccess }) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading} // ⬅️ Disable input while loading
             required
           />
           
-          <button type="submit" className="btn btn-logout" style={{marginTop: '10px'}}>
-            {isSignup ? 'Sign Up' : 'Login'}
+          {/* ⬇️ ANIMATED BUTTON */}
+          <button 
+            type="submit" 
+            className="btn btn-logout" 
+            style={{marginTop: '10px', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer'}}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+                <>
+                    <span className="spinner"></span> Connecting...
+                </>
+            ) : (
+                isSignup ? 'Sign Up' : 'Login'
+            )}
           </button>
         </form>
 
@@ -85,9 +105,11 @@ function Login({ onLoginSuccess }) {
         {error && <p style={{ color: '#e50914', marginTop: '15px' }}>{error}</p>}
 
         <span className="toggle-link" onClick={() => {
-            setIsSignup(!isSignup);
-            setError('');
-            setSuccessMsg('');
+            if(!isLoading) {
+                setIsSignup(!isSignup);
+                setError('');
+                setSuccessMsg('');
+            }
         }}>
           {isSignup ? 'Already have an account? Login' : 'New here? Create an account'}
         </span>
@@ -97,4 +119,3 @@ function Login({ onLoginSuccess }) {
 }
 
 export default Login;
-

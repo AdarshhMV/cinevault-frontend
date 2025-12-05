@@ -160,7 +160,7 @@ body {
   border: 1px solid #444;
   background: #2a2a2a;
   color: white;
-  box-sizing: border-box; /* Fixes padding issues */
+  box-sizing: border-box; 
 }
 
 .toggle-link {
@@ -205,4 +205,21 @@ body {
 
 .view-container {
   animation: fadeIn 0.4s ease;
+}
+
+/* --- LOADING SPINNER --- */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
