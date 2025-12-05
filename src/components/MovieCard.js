@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../App.css';
-import { toast } from 'react-toastify'; // ⬅️ NEW IMPORT
+import { toast } from 'react-toastify'; 
 
 function MovieCard({ movie }) {
   const [onWatchList, setOnWatchList] = useState(movie.onWatchList || false);
@@ -8,6 +8,8 @@ function MovieCard({ movie }) {
   const [userRating, setUserRating] = useState(movie.userRating || 0);
 
   const API_KEY = "de8c3435"; 
+  // 🚀 LIVE BACKEND URL (This fixes the connection refused error)
+  const API_BASE_URL = "https://cinevault-api-mcpa.onrender.com";
 
   const saveToDjango = async (updates) => {
     const token = localStorage.getItem('accessToken');
@@ -35,7 +37,8 @@ function MovieCard({ movie }) {
     };
 
     try {
-      await fetch('http://127.0.0.1:8000/api/save-movie/', {
+      // ⬇️ UPDATED to use the Live URL
+      await fetch(`${API_BASE_URL}/api/save-movie/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,6 +48,7 @@ function MovieCard({ movie }) {
       });
     } catch (error) {
       toast.error("Failed to save!");
+      console.error(error);
     }
   };
 
@@ -54,7 +58,7 @@ function MovieCard({ movie }) {
     
     if (newValue) {
         setIsWatched(false);
-        toast.success("Added to Watchlist! 📝"); // ⬅️ NOTIFICATION
+        toast.success("Added to Watchlist! 📝"); 
     } else {
         toast.info("Removed from Watchlist");
     }
@@ -71,7 +75,7 @@ function MovieCard({ movie }) {
 
     if (newValue) {
         setOnWatchList(false);
-        toast.success("Marked as Watched! ✅"); // ⬅️ NOTIFICATION
+        toast.success("Marked as Watched! ✅"); 
     }
 
     saveToDjango({ 
